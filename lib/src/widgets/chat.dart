@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/src/widgets/chat_list.dart';
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import '../chat_l10n.dart';
@@ -29,7 +30,10 @@ class Chat extends StatefulWidget {
     required this.onSendPressed,
     this.theme = const DefaultChatTheme(),
     required this.user,
+    required this.onTap,
   }) : super(key: key);
+
+  final void Function(int?) onTap;
 
   /// See [Message.dateLocale]
   final String? dateLocale;
@@ -155,11 +159,99 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget buildMessage(
+    types.Message message,
+    int? index,
+    List<String> galleryItems,
+  ) {
     final _messageWidth =
         min(MediaQuery.of(context).size.width * 0.77, 440).floor();
 
+    if (index == widget.messages.length) {
+      return Container(height: 16);
+    }
+
+    final isFirst = index == 0;
+    final isLast = index == widget.messages.length - 1;
+    final nextMessage =
+        (isLast || index == null) ? null : widget.messages[index + 1];
+    final previousMessage =
+        (isFirst || index == null) ? null : widget.messages[index - 1];
+
+    var nextMessageDifferentDay = false;
+    var nextMessageSameAuthor = false;
+    var previousMessageSameAuthor = false;
+    var shouldRenderTime = message.timestamp != null;
+
+    if (nextMessage != null && nextMessage.timestamp != null) {
+      nextMessageDifferentDay = message.timestamp != null &&
+          DateTime.fromMillisecondsSinceEpoch(
+                message.timestamp! * 1000,
+              ).day !=
+              DateTime.fromMillisecondsSinceEpoch(
+                nextMessage.timestamp! * 1000,
+              ).day;
+      nextMessageSameAuthor = nextMessage.authorId == message.authorId;
+    }
+
+    if (previousMessage != null) {
+      previousMessageSameAuthor = previousMessage.authorId == message.authorId;
+      shouldRenderTime = message.timestamp != null &&
+          previousMessage.timestamp != null &&
+          (!previousMessageSameAuthor ||
+              previousMessage.timestamp! - message.timestamp! >= 60);
+    }
+
+    return Column(
+      children: [
+        if (nextMessageDifferentDay || (isLast && message.timestamp != null))
+          Container(
+            margin: EdgeInsets.only(
+              bottom: 32,
+              top: nextMessageSameAuthor ? 24 : 16,
+            ),
+            child: Text(
+              getVerboseDateTimeRepresentation(
+                DateTime.fromMillisecondsSinceEpoch(
+                  message.timestamp! * 1000,
+                ),
+                widget.dateLocale,
+                widget.l10n.today,
+                widget.l10n.yesterday,
+              ),
+              style: widget.theme.subtitle2.copyWith(
+                color: widget.theme.secondaryTextColor,
+              ),
+            ),
+          ),
+        GestureDetector(
+          onTap: () => widget.onTap(index),
+          // child: Container(
+          //   padding: const EdgeInsets.all(16),
+          //   margin: const EdgeInsets.all(8),
+          //   color: Colors.lightGreen[50],
+          //   child: Text((message as types.TextMessage).text),
+          // ),
+          child: Message(
+            key: ValueKey(message),
+            dateLocale: widget.dateLocale,
+            onImagePressed: (uri) {
+              _onImagePressed(uri, galleryItems);
+            },
+            message: message,
+            messageWidth: _messageWidth,
+            onFilePressed: widget.onFilePressed,
+            onPreviewDataFetched: _onPreviewDataFetched,
+            previousMessageSameAuthor: previousMessageSameAuthor,
+            shouldRenderTime: shouldRenderTime,
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final galleryItems =
         widget.messages.fold<List<String>>([], (previousValue, element) {
       // Check if element is image message
@@ -214,110 +306,23 @@ class _ChatState extends State<Chat> {
                             : GestureDetector(
                                 onTap: () => FocusManager.instance.primaryFocus
                                     ?.unfocus(),
-                                child: ListView.builder(
-                                  itemCount: widget.messages.length + 1,
-                                  padding: EdgeInsets.zero,
-                                  reverse: true,
-                                  itemBuilder: (context, index) {
-                                    if (index == widget.messages.length) {
-                                      return Container(height: 16);
-                                    }
-
-                                    final message = widget.messages[index];
-                                    final isFirst = index == 0;
-                                    final isLast =
-                                        index == widget.messages.length - 1;
-                                    final nextMessage = isLast
-                                        ? null
-                                        : widget.messages[index + 1];
-                                    final previousMessage = isFirst
-                                        ? null
-                                        : widget.messages[index - 1];
-
-                                    var nextMessageDifferentDay = false;
-                                    var nextMessageSameAuthor = false;
-                                    var previousMessageSameAuthor = false;
-                                    var shouldRenderTime =
-                                        message.timestamp != null;
-
-                                    if (nextMessage != null &&
-                                        nextMessage.timestamp != null) {
-                                      nextMessageDifferentDay = message
-                                                  .timestamp !=
-                                              null &&
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                                message.timestamp! * 1000,
-                                              ).day !=
-                                              DateTime
-                                                  .fromMillisecondsSinceEpoch(
-                                                nextMessage.timestamp! * 1000,
-                                              ).day;
-                                      nextMessageSameAuthor =
-                                          nextMessage.authorId ==
-                                              message.authorId;
-                                    }
-
-                                    if (previousMessage != null) {
-                                      previousMessageSameAuthor =
-                                          previousMessage.authorId ==
-                                              message.authorId;
-                                      shouldRenderTime = message.timestamp !=
-                                              null &&
-                                          previousMessage.timestamp != null &&
-                                          (!previousMessageSameAuthor ||
-                                              previousMessage.timestamp! -
-                                                      message.timestamp! >=
-                                                  60);
-                                    }
-
-                                    return Column(
-                                      children: [
-                                        if (nextMessageDifferentDay ||
-                                            (isLast &&
-                                                message.timestamp != null))
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                              bottom: 32,
-                                              top: nextMessageSameAuthor
-                                                  ? 24
-                                                  : 16,
-                                            ),
-                                            child: Text(
-                                              getVerboseDateTimeRepresentation(
-                                                DateTime
-                                                    .fromMillisecondsSinceEpoch(
-                                                  message.timestamp! * 1000,
-                                                ),
-                                                widget.dateLocale,
-                                                widget.l10n.today,
-                                                widget.l10n.yesterday,
-                                              ),
-                                              style: widget.theme.subtitle2
-                                                  .copyWith(
-                                                color: widget
-                                                    .theme.secondaryTextColor,
-                                              ),
-                                            ),
-                                          ),
-                                        Message(
-                                          key: ValueKey(message),
-                                          dateLocale: widget.dateLocale,
-                                          onImagePressed: (uri) {
-                                            _onImagePressed(uri, galleryItems);
-                                          },
-                                          message: message,
-                                          messageWidth: _messageWidth,
-                                          onFilePressed: widget.onFilePressed,
-                                          onPreviewDataFetched:
-                                              _onPreviewDataFetched,
-                                          previousMessageSameAuthor:
-                                              previousMessageSameAuthor,
-                                          shouldRenderTime: shouldRenderTime,
-                                        ),
-                                      ],
-                                    );
-                                  },
+                                child: ChatList(
+                                  items: widget.messages,
+                                  itemBuilder: (item, index) => buildMessage(
+                                    item,
+                                    index,
+                                    galleryItems,
+                                  ),
                                 ),
+                                // child: ListView.builder(
+                                //   itemCount: widget.messages.length + 1,
+                                //   padding: EdgeInsets.zero,
+                                //   reverse: true,
+                                //   itemBuilder: (context, index) => buildMessage(
+                                //     index,
+                                //     galleryItems,
+                                //   ),
+                                // ),
                               ),
                       ),
                       Input(
