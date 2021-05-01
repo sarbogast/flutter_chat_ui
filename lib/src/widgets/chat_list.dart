@@ -10,7 +10,14 @@ class ChatList extends StatefulWidget {
   }) : super(key: key);
 
   final List<types.Message> items;
-  final Widget Function(types.Message, int? index) itemBuilder;
+  final Widget Function(
+    types.Message,
+    int? index,
+    Animation<double> animation,
+    bool showDate,
+    int? indexToDelayHeader,
+    bool isRemoving,
+  ) itemBuilder;
 
   @override
   _ChatListState createState() => _ChatListState();
@@ -19,6 +26,7 @@ class ChatList extends StatefulWidget {
 class _ChatListState extends State<ChatList> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   late List<types.Message> oldData = List.from(widget.items);
+  int? indexToDelayHeader;
 
   @override
   void initState() {
@@ -45,10 +53,29 @@ class _ChatListState extends State<ChatList> {
       update.when(
         insert: (pos, count) => _listKey.currentState?.insertItem(pos),
         remove: (pos, count) {
+          print(oldList.map((e) => e.toJson()));
+          print(pos);
           final item = oldList[pos];
+          final nextItem = pos + 1 < oldData.length ? oldData[pos + 1] : null;
+          final showDate = nextItem == null ||
+              DateTime.fromMillisecondsSinceEpoch(
+                    item.timestamp! * 1000,
+                  )
+                      .difference(DateTime.fromMillisecondsSinceEpoch(
+                        nextItem.timestamp! * 1000,
+                      ))
+                      .inSeconds >=
+                  3;
+
+          // setState(() {
+          indexToDelayHeader = pos - 1;
+          // print('KEK');
+          // });
+
           _listKey.currentState?.removeItem(
             pos,
-            (_, animation) => _buildRemovedMessage(item, animation),
+            (_, animation) =>
+                _buildRemovedMessage(item, animation, showDate, null),
           );
         },
         change: (pos, payload) =>
@@ -60,13 +87,42 @@ class _ChatListState extends State<ChatList> {
     oldData = List.from(widget.items);
   }
 
-  Widget _buildRemovedMessage(types.Message item, Animation<double> animation) {
+  Widget _buildRemovedMessage(
+    types.Message item,
+    Animation<double> animation,
+    bool showHeader,
+    int? indexToDelayHeader,
+  ) {
     return SizeTransition(
       axisAlignment: -1,
       sizeFactor: animation.drive(CurveTween(curve: Curves.easeInQuad)),
       child: FadeTransition(
         opacity: animation.drive(CurveTween(curve: Curves.easeInQuad)),
-        child: widget.itemBuilder(item, null),
+        // child: Container(
+        //   color: Colors.red,
+        //   height: 200,
+        //   width: 200,
+        // ),
+        child: Column(
+          children: [
+            // Container(
+            //   // margin: const EdgeInsets.only(
+            //   //   bottom: 32,
+            //   //   top: 16,
+            //   // ),
+            //   // width: animation.value,
+            //   child: const Text('Today'),
+            // ),
+            widget.itemBuilder(
+              item,
+              null,
+              animation,
+              showHeader,
+              null,
+              false,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -83,6 +139,22 @@ class _ChatListState extends State<ChatList> {
   Widget _buildNewMessage(int index, Animation<double> animation) {
     try {
       final item = oldData[index];
+      final nextItem = index + 1 < oldData.length ? oldData[index + 1] : null;
+      // print(nextItem?.toJson());
+      final showDate = nextItem == null ||
+          DateTime.fromMillisecondsSinceEpoch(
+                item.timestamp! * 1000,
+              )
+                  .difference(DateTime.fromMillisecondsSinceEpoch(
+                    nextItem.timestamp! * 1000,
+                  ))
+                  .inSeconds >=
+              3;
+
+      // print(item.toJson());
+      // print(index);
+      // print('LOL');
+      // print(indexToDelayHeader);
 
       return SizeTransition(
         axisAlignment: -1,
@@ -96,7 +168,8 @@ class _ChatListState extends State<ChatList> {
               CurveTween(curve: Curves.easeOutQuad),
             ),
           ),
-          child: widget.itemBuilder(item, index),
+          child: widget.itemBuilder(
+              item, index, animation, showDate, indexToDelayHeader, false),
         ),
       );
     } catch (e) {

@@ -165,7 +165,7 @@ class Message extends StatelessWidget {
           ? Alignment.centerRight
           : Alignment.centerLeft,
       margin: EdgeInsets.only(
-        bottom: previousMessageSameAuthor ? 8 : 16,
+        top: previousMessageSameAuthor ? 8 : 8,
         left: 24,
         right: 24,
       ),

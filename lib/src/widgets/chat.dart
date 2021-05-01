@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/src/widgets/chat_list.dart';
+import 'package:flutter_chat_ui/src/widgets/header.dart';
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import '../chat_l10n.dart';
@@ -163,13 +164,17 @@ class _ChatState extends State<Chat> {
     types.Message message,
     int? index,
     List<String> galleryItems,
+    Animation<double> animation,
+    bool showDate,
+    int? indexToDelayHeader,
+    bool isRemoving,
   ) {
     final _messageWidth =
         min(MediaQuery.of(context).size.width * 0.77, 440).floor();
 
-    if (index == widget.messages.length) {
-      return Container(height: 16);
-    }
+    // if (index == widget.messages.length) {
+    //   return Container(height: 16);
+    // }
 
     final isFirst = index == 0;
     final isLast = index == widget.messages.length - 1;
@@ -178,19 +183,19 @@ class _ChatState extends State<Chat> {
     final previousMessage =
         (isFirst || index == null) ? null : widget.messages[index - 1];
 
-    var nextMessageDifferentDay = false;
+    // var nextMessageDifferentDay = false;
     var nextMessageSameAuthor = false;
     var previousMessageSameAuthor = false;
     var shouldRenderTime = message.timestamp != null;
 
     if (nextMessage != null && nextMessage.timestamp != null) {
-      nextMessageDifferentDay = message.timestamp != null &&
-          DateTime.fromMillisecondsSinceEpoch(
-                message.timestamp! * 1000,
-              ).day !=
-              DateTime.fromMillisecondsSinceEpoch(
-                nextMessage.timestamp! * 1000,
-              ).day;
+      // nextMessageDifferentDay = message.timestamp != null &&
+      //     DateTime.fromMillisecondsSinceEpoch(
+      //           message.timestamp! * 1000,
+      //         ).day !=
+      //         DateTime.fromMillisecondsSinceEpoch(
+      //           nextMessage.timestamp! * 1000,
+      //         ).day;
       nextMessageSameAuthor = nextMessage.authorId == message.authorId;
     }
 
@@ -204,25 +209,12 @@ class _ChatState extends State<Chat> {
 
     return Column(
       children: [
-        if (nextMessageDifferentDay || (isLast && message.timestamp != null))
-          Container(
-            margin: EdgeInsets.only(
-              bottom: 32,
-              top: nextMessageSameAuthor ? 24 : 16,
-            ),
-            child: Text(
-              getVerboseDateTimeRepresentation(
-                DateTime.fromMillisecondsSinceEpoch(
-                  message.timestamp! * 1000,
-                ),
-                widget.dateLocale,
-                widget.l10n.today,
-                widget.l10n.yesterday,
-              ),
-              style: widget.theme.subtitle2.copyWith(
-                color: widget.theme.secondaryTextColor,
-              ),
-            ),
+        if (showDate)
+          Header(
+            animation1: animation,
+            // key: ValueKey(message.id),
+            delayHeader: index == indexToDelayHeader,
+            isRemoving: isRemoving,
           ),
         GestureDetector(
           onTap: () => widget.onTap(index),
@@ -242,10 +234,15 @@ class _ChatState extends State<Chat> {
             messageWidth: _messageWidth,
             onFilePressed: widget.onFilePressed,
             onPreviewDataFetched: _onPreviewDataFetched,
-            previousMessageSameAuthor: previousMessageSameAuthor,
-            shouldRenderTime: shouldRenderTime,
+            previousMessageSameAuthor: nextMessageSameAuthor,
+            shouldRenderTime: false,
           ),
         ),
+        // if (isFirst)
+        //   Container(
+        //     height: 8,
+        //     color: Colors.red,
+        //   ),
       ],
     );
   }
@@ -308,10 +305,22 @@ class _ChatState extends State<Chat> {
                                     ?.unfocus(),
                                 child: ChatList(
                                   items: widget.messages,
-                                  itemBuilder: (item, index) => buildMessage(
+                                  itemBuilder: (
+                                    item,
+                                    index,
+                                    animation,
+                                    showDate,
+                                    indexToDelayHeader,
+                                    isRemoving,
+                                  ) =>
+                                      buildMessage(
                                     item,
                                     index,
                                     galleryItems,
+                                    animation,
+                                    showDate,
+                                    indexToDelayHeader,
+                                    isRemoving,
                                   ),
                                 ),
                                 // child: ListView.builder(
