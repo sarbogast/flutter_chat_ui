@@ -31,7 +31,7 @@ dependency_overrides:
   flutter_chat_types:
     git:
       url: https://github.com/sarbogast/flutter_chat_types
-      ref: feature/audio_message_types
+      ref: development
 
 flutter:
   assets:
