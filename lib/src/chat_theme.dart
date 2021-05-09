@@ -34,6 +34,9 @@ abstract class ChatTheme {
     required this.cancelRecordingButtonIcon,
     required this.recordColor,
     required this.playButtonIcon,
+    required this.videoTrackBackgroundColor,
+    required this.videoTrackPlayedColor,
+    required this.videoTrackBufferedColor,
   });
 
   /// Icon for select attachment button
@@ -120,6 +123,15 @@ abstract class ChatTheme {
 
   /// Icon for play button
   final String? playButtonIcon;
+
+  /// Background color of track in video messages
+  final Color videoTrackBackgroundColor;
+
+  /// Color of the played part of the track in video messages
+  final Color videoTrackPlayedColor;
+
+  /// Color of the buffered part of the track in video messages
+  final Color videoTrackBufferedColor;
 }
 
 /// Default chat theme which extends [ChatTheme]
@@ -184,6 +196,9 @@ class DefaultChatTheme extends ChatTheme {
     String? cancelRecordingButtonIcon,
     Color recordColor = Colors.red,
     String? playButtonIcon,
+    Color videoTrackBackgroundColor = const Color.fromRGBO(200, 200, 200, 0.5),
+    Color videoTrackBufferedColor = const Color.fromRGBO(50, 50, 200, 0.2),
+    Color videoTrackPlayedColor = const Color(0xaa6f61e8),
   }) : super(
           attachmentButtonIcon: attachmentButtonIcon,
           backgroundColor: backgroundColor,
@@ -213,6 +228,9 @@ class DefaultChatTheme extends ChatTheme {
           cancelRecordingButtonIcon: cancelRecordingButtonIcon,
           recordColor: recordColor,
           playButtonIcon: playButtonIcon,
+          videoTrackBackgroundColor: videoTrackBackgroundColor,
+          videoTrackBufferedColor: videoTrackBufferedColor,
+          videoTrackPlayedColor: videoTrackPlayedColor,
         );
 }
 
@@ -278,6 +296,10 @@ class DarkChatTheme extends ChatTheme {
     String? cancelRecordingButtonIcon,
     Color recordColor = Colors.red,
     String? playButtonIcon,
+    Color videoTrackColor = const Color(0xff6f61e8),
+    Color videoTrackBackgroundColor = const Color.fromRGBO(200, 200, 200, 0.5),
+    Color videoTrackBufferedColor = const Color.fromRGBO(50, 50, 200, 0.2),
+    Color videoTrackPlayedColor = const Color(0xaa6f61e8),
   }) : super(
           attachmentButtonIcon: attachmentButtonIcon,
           backgroundColor: backgroundColor,
@@ -307,5 +329,8 @@ class DarkChatTheme extends ChatTheme {
           cancelRecordingButtonIcon: cancelRecordingButtonIcon,
           recordColor: recordColor,
           playButtonIcon: playButtonIcon,
+          videoTrackBackgroundColor: videoTrackBackgroundColor,
+          videoTrackBufferedColor: videoTrackBufferedColor,
+          videoTrackPlayedColor: videoTrackPlayedColor,
         );
 }

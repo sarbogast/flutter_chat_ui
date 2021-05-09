@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/src/widgets/audio_message.dart';
+import 'package:flutter_chat_ui/src/widgets/video_message.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'file_message.dart';
@@ -72,6 +73,12 @@ class Message extends StatelessWidget {
         final audioMessage = message as types.AudioMessage;
         return AudioMessage(
           message: audioMessage,
+          messageWidth: messageWidth,
+        );
+      case types.MessageType.video:
+        final videoMessage = message as types.VideoMessage;
+        return VideoMessage(
+          message: videoMessage,
           messageWidth: messageWidth,
         );
       case types.MessageType.text:
