@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 import 'inherited_chat_theme.dart';
+import 'inherited_l10n.dart';
 import 'inherited_user.dart';
 
 /// A class that represents video message widget
@@ -44,7 +48,12 @@ class _VideoMessageState extends State<VideoMessage> {
   }
 
   Future<void> _initVideoPlayer() async {
-    _controller = VideoPlayerController.network(widget.message.uri);
+    if (widget.message.uri.startsWith('http://') ||
+        widget.message.uri.startsWith('https://')) {
+      _controller = VideoPlayerController.network(widget.message.uri);
+    } else if (!kIsWeb) {
+      _controller = VideoPlayerController.file(File(widget.message.uri));
+    }
     _controller.addListener(() async {
       setState(() {});
     });
@@ -79,86 +88,91 @@ class _VideoMessageState extends State<VideoMessage> {
         : InheritedChatTheme.of(context).theme.secondaryTextColor;
 
     if (_controller.value.isInitialized) {
-      return AspectRatio(
-        aspectRatio: _controller.value.aspectRatio,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            VideoPlayer(_controller),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 50),
-              reverseDuration: const Duration(milliseconds: 200),
-              child: _controller.value.isPlaying
-                  ? const SizedBox.shrink()
-                  : Container(
-                      color: Colors.black26,
-                      child: Center(
-                        child: InheritedChatTheme.of(context)
-                                    .theme
-                                    .playButtonIcon !=
-                                null
-                            ? Image.asset(
-                                InheritedChatTheme.of(context)
-                                    .theme
-                                    .playButtonIcon!,
-                                color: _background,
-                              )
-                            : Icon(
-                                Icons.play_circle_fill,
-                                color: _background,
-                                size: 44,
-                              ),
-                      ),
-                    ),
-            ),
-            VideoProgressIndicator(
-              _controller,
-              allowScrubbing: true,
-              colors: VideoProgressColors(
-                playedColor:
-                    InheritedChatTheme.of(context).theme.videoTrackPlayedColor,
-                bufferedColor: InheritedChatTheme.of(context)
-                    .theme
-                    .videoTrackBufferedColor,
-                backgroundColor: InheritedChatTheme.of(context)
-                    .theme
-                    .videoTrackBackgroundColor,
-              ),
-            ),
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 10.0, top: 10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                    color: _background.withOpacity(0.5),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 6.0, vertical: 3.0),
-                    child: Text(
-                      VideoMessage.durationFormat.format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                          _controller.value.isPlaying
-                              ? (_controller.value.duration.inMilliseconds -
-                                  _controller.value.position.inMilliseconds)
-                              : _controller.value.duration.inMilliseconds,
+      return Tooltip(
+        message: InheritedL10n.of(context).l10n.videoPlayerAccessibilityLabel,
+        child: AspectRatio(
+          aspectRatio: _controller.value.aspectRatio,
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              VideoPlayer(_controller),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 50),
+                reverseDuration: const Duration(milliseconds: 200),
+                child: _controller.value.isPlaying
+                    ? const SizedBox.shrink()
+                    : Container(
+                        color: Colors.black26,
+                        child: Center(
+                          child: InheritedChatTheme.of(context)
+                                      .theme
+                                      .playButtonIcon !=
+                                  null
+                              ? Image.asset(
+                                  InheritedChatTheme.of(context)
+                                      .theme
+                                      .playButtonIcon!,
+                                  color: _background,
+                                )
+                              : Icon(
+                                  Icons.play_circle_fill,
+                                  color: _background,
+                                  size: 44,
+                                ),
                         ),
                       ),
-                      style: InheritedChatTheme.of(context)
-                          .theme
-                          .caption
-                          .copyWith(color: _foreground),
+              ),
+              VideoProgressIndicator(
+                _controller,
+                allowScrubbing: true,
+                colors: VideoProgressColors(
+                  playedColor: InheritedChatTheme.of(context)
+                      .theme
+                      .videoTrackPlayedColor,
+                  bufferedColor: InheritedChatTheme.of(context)
+                      .theme
+                      .videoTrackBufferedColor,
+                  backgroundColor: InheritedChatTheme.of(context)
+                      .theme
+                      .videoTrackBackgroundColor,
+                ),
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10.0, top: 10.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10.0)),
+                      color: _background.withOpacity(0.5),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6.0, vertical: 3.0),
+                      child: Text(
+                        VideoMessage.durationFormat.format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                            _controller.value.isPlaying
+                                ? (_controller.value.duration.inMilliseconds -
+                                    _controller.value.position.inMilliseconds)
+                                : _controller.value.duration.inMilliseconds,
+                          ),
+                        ),
+                        style: InheritedChatTheme.of(context)
+                            .theme
+                            .caption
+                            .copyWith(color: _foreground),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            GestureDetector(
-              onTap: _togglePlaying,
-            ),
-          ],
+              GestureDetector(
+                onTap: _togglePlaying,
+              ),
+            ],
+          ),
         ),
       );
     } else {

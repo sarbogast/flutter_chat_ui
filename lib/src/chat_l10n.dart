@@ -17,6 +17,7 @@ abstract class ChatL10n {
     required this.playButtonAccessibilityLabel,
     required this.pauseButtonAccessibilityLabel,
     required this.audioTrackAccessibilityLabel,
+    required this.videoPlayerAccessibilityLabel,
   });
 
   /// Accessibility label (hint) for the attachment button
@@ -51,6 +52,9 @@ abstract class ChatL10n {
 
   /// Accessibility label (hint) for the audio track
   final String audioTrackAccessibilityLabel;
+
+  /// Accessibility label (hint) for the video player in video message
+  final String videoPlayerAccessibilityLabel;
 }
 
 /// English l10n which extends [ChatL10n]
@@ -71,6 +75,7 @@ class ChatL10nEn extends ChatL10n {
     String playButtonAccessibilityLabel = 'Play',
     String pauseButtonAccessibilityLabel = 'Pause',
     String audioTrackAccessibilityLabel = 'Tap to play/pause, slide to seek',
+    String videoPlayerAccessibilityLabel = 'Play/Pause',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
@@ -84,6 +89,7 @@ class ChatL10nEn extends ChatL10n {
           playButtonAccessibilityLabel: playButtonAccessibilityLabel,
           pauseButtonAccessibilityLabel: pauseButtonAccessibilityLabel,
           audioTrackAccessibilityLabel: audioTrackAccessibilityLabel,
+          videoPlayerAccessibilityLabel: videoPlayerAccessibilityLabel,
         );
 }
 
@@ -106,6 +112,7 @@ class ChatL10nEs extends ChatL10n {
     String pauseButtonAccessibilityLabel = 'Pausar',
     String audioTrackAccessibilityLabel =
         'Toca para reproducir/pausar, desliza para buscar',
+    String videoPlayerAccessibilityLabel = 'Reproducir/Pausar',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
@@ -119,6 +126,7 @@ class ChatL10nEs extends ChatL10n {
           playButtonAccessibilityLabel: playButtonAccessibilityLabel,
           pauseButtonAccessibilityLabel: pauseButtonAccessibilityLabel,
           audioTrackAccessibilityLabel: audioTrackAccessibilityLabel,
+          videoPlayerAccessibilityLabel: videoPlayerAccessibilityLabel,
         );
 }
 
@@ -141,6 +149,7 @@ class ChatL10nPl extends ChatL10n {
     String pauseButtonAccessibilityLabel = 'Wstrzymać',
     String audioTrackAccessibilityLabel =
         'Dotknij, aby odtworzyć/wstrzymać, przesuń, aby wyszukać',
+    String videoPlayerAccessibilityLabel = 'Odtwórz/Wstrzymać',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
@@ -154,6 +163,7 @@ class ChatL10nPl extends ChatL10n {
           playButtonAccessibilityLabel: playButtonAccessibilityLabel,
           pauseButtonAccessibilityLabel: pauseButtonAccessibilityLabel,
           audioTrackAccessibilityLabel: audioTrackAccessibilityLabel,
+          videoPlayerAccessibilityLabel: videoPlayerAccessibilityLabel,
         );
 }
 
@@ -176,6 +186,7 @@ class ChatL10nRu extends ChatL10n {
     String pauseButtonAccessibilityLabel = 'Приостановить',
     String audioTrackAccessibilityLabel =
         'Нажмите для воспроизведения / паузы, проведите пальцем для поиска',
+    String videoPlayerAccessibilityLabel = 'Воспроизвести/Приостановить',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
@@ -189,6 +200,7 @@ class ChatL10nRu extends ChatL10n {
           playButtonAccessibilityLabel: playButtonAccessibilityLabel,
           pauseButtonAccessibilityLabel: pauseButtonAccessibilityLabel,
           audioTrackAccessibilityLabel: audioTrackAccessibilityLabel,
+          videoPlayerAccessibilityLabel: videoPlayerAccessibilityLabel,
         );
 }
 
@@ -211,6 +223,7 @@ class ChatL10nUk extends ChatL10n {
     String pauseButtonAccessibilityLabel = 'Призупиніть',
     String audioTrackAccessibilityLabel =
         'Натисніть, щоб відтворити / призупинити, проведіть пальцем, щоб шукати',
+    String videoPlayerAccessibilityLabel = 'відтворити / призупинити',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
@@ -224,5 +237,6 @@ class ChatL10nUk extends ChatL10n {
           playButtonAccessibilityLabel: playButtonAccessibilityLabel,
           pauseButtonAccessibilityLabel: pauseButtonAccessibilityLabel,
           audioTrackAccessibilityLabel: audioTrackAccessibilityLabel,
+          videoPlayerAccessibilityLabel: videoPlayerAccessibilityLabel,
         );
 }
