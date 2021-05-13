@@ -40,24 +40,31 @@ class _ChatPageState extends State<ChatPage> {
   List<types.Message> _messages = [];
   final _user = const types.User(id: '06c33e8b-e835-4736-80f4-63f44b66666c');
   bool _microphoneAllowed = false;
+  bool _cameraAllowed = false;
 
   @override
   void initState() {
     super.initState();
     _loadMessages();
-    _askForMicrophonePermission();
+    _askForPermissions();
   }
 
-  Future<void> _askForMicrophonePermission() async {
+  Future<void> _askForPermissions() async {
     if (kIsWeb) {
       setState(() {
         _microphoneAllowed = true;
+        _cameraAllowed = false;
       });
       return;
     }
     if (await Permission.microphone.request().isGranted) {
       setState(() {
         _microphoneAllowed = true;
+      });
+    }
+    if (await Permission.camera.request().isGranted) {
+      setState(() {
+        _cameraAllowed = true;
       });
     }
   }
@@ -83,6 +90,38 @@ class _ChatPageState extends State<ChatPage> {
       id: const Uuid().v4(),
       mimeType: mimeType,
       waveForm: waveForm,
+      timestamp: (DateTime.now().millisecondsSinceEpoch / 1000).floor(),
+      uri: filePath,
+    );
+
+    if (kIsWeb) {
+      final response = await http.get(Uri.parse(filePath));
+      final data = response.bodyBytes;
+      print('audio recording size: ${data.length}');
+    } else {
+      final file = File(filePath);
+      final data = await file.readAsBytes();
+      print('audio recording size: ${data.length}');
+    }
+
+    _addMessage(message);
+
+    return true;
+  }
+
+  Future<bool> _handleVideoRecorded({
+    required Duration length,
+    required String filePath,
+    required String mimeType,
+  }) async {
+    //To simulate an upload that takes some time
+    await Future.delayed(const Duration(seconds: 3));
+
+    final message = types.VideoMessage(
+      length: length,
+      authorId: _user.id,
+      id: const Uuid().v4(),
+      mimeType: mimeType,
       timestamp: (DateTime.now().millisecondsSinceEpoch / 1000).floor(),
       uri: filePath,
     );
@@ -247,6 +286,8 @@ class _ChatPageState extends State<ChatPage> {
         onPreviewDataFetched: _handlePreviewDataFetched,
         onSendPressed: _handleSendPressed,
         onAudioRecorded: _microphoneAllowed ? _handleAudioRecorded : null,
+        onVideoRecorded:
+            _microphoneAllowed && _cameraAllowed ? _handleVideoRecorded : null,
         user: _user,
       ),
     );

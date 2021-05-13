@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_chat_ui/src/widgets/audio_button.dart';
+
 import 'attachment_button.dart';
+import 'audio_button.dart';
 import 'audio_recorder.dart';
 import 'inherited_chat_theme.dart';
 import 'inherited_l10n.dart';
 import 'send_button.dart';
+import 'video_button.dart';
+import 'video_recorder.dart';
 
 /// A class that represents bottom bar widget with a text field, attachment and
 /// send buttons inside. Hides send button when text field is empty.
@@ -20,6 +23,7 @@ class Input extends StatefulWidget {
     this.onAttachmentPressed,
     required this.onSendPressed,
     this.onAudioRecorded,
+    this.onVideoRecorded,
   }) : super(key: key);
 
   /// See [AttachmentButton.onPressed]
@@ -43,6 +47,13 @@ class Input extends StatefulWidget {
     required String mimeType,
   })? onAudioRecorded;
 
+  /// See [VideoButton.onPressed]
+  final Future<bool> Function({
+    required Duration length,
+    required String filePath,
+    required String mimeType,
+  })? onVideoRecorded;
+
   @override
   _InputState createState() => _InputState();
 }
@@ -54,6 +65,8 @@ class _InputState extends State<Input> {
   bool _sendButtonVisible = false;
   bool _recordingAudio = false;
   bool _audioUploading = false;
+  //bool _recordingVideo = false;
+  bool _videoUploading = false;
 
   @override
   void initState() {
@@ -112,13 +125,33 @@ class _InputState extends State<Input> {
       );
     } else {
       return AudioButton(
-        onPressed: _toggleRecording,
+        onPressed: _toggleAudioRecording,
         recordingAudio: _recordingAudio,
       );
     }
   }
 
-  Future<void> _toggleRecording() async {
+  Widget _videoWidget() {
+    if (_videoUploading == true) {
+      return SizedBox(
+        height: 24,
+        width: 24,
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.transparent,
+          strokeWidth: 2,
+          valueColor: AlwaysStoppedAnimation<Color>(
+            InheritedChatTheme.of(context).theme.inputTextColor,
+          ),
+        ),
+      );
+    } else {
+      return VideoButton(
+        onPressed: _toggleVideoRecording,
+      );
+    }
+  }
+
+  Future<void> _toggleAudioRecording() async {
     if (!_recordingAudio) {
       setState(() {
         _recordingAudio = true;
@@ -145,6 +178,56 @@ class _InputState extends State<Input> {
           });
         }
       }
+    }
+  }
+
+  Future<void> _toggleVideoRecording() async {
+    final l10n = InheritedL10n.of(context).l10n;
+    final theme = InheritedChatTheme.of(context).theme;
+    final file = await Navigator.of(context).push<VideoRecording?>(
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            InheritedChatTheme(
+          theme: theme,
+          child: InheritedL10n(
+            l10n: l10n,
+            child: const VideoRecorder(),
+          ),
+        ),
+        transitionDuration: const Duration(milliseconds: 200),
+        reverseTransitionDuration: const Duration(milliseconds: 100),
+        transitionsBuilder: (
+          BuildContext context,
+          Animation<double> animation,
+          Animation<double> secondaryAnimation,
+          Widget child,
+        ) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.0, 1.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: FadeTransition(
+              opacity: animation,
+              child: child,
+            ), // child is the value returned by pageBuilder
+          );
+        },
+      ),
+    );
+    if (file != null) {
+      setState(() {
+        _videoUploading = true;
+      });
+      final success = await widget.onVideoRecorded!(
+        length: file.length,
+        filePath: file.filePath,
+        mimeType: file.mimeType,
+      );
+      setState(() {
+        _videoUploading = false;
+      });
     }
   }
 
@@ -213,6 +296,13 @@ class _InputState extends State<Input> {
             Visibility(
               visible: widget.onAudioRecorded != null && !_sendButtonVisible,
               child: _audioWidget(),
+            ),
+            Visibility(
+              visible: !kIsWeb &&
+                  widget.onVideoRecorded != null &&
+                  !_sendButtonVisible &&
+                  !_recordingAudio,
+              child: _videoWidget(),
             ),
           ],
         ),

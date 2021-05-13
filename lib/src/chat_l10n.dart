@@ -17,7 +17,11 @@ abstract class ChatL10n {
     required this.playButtonAccessibilityLabel,
     required this.pauseButtonAccessibilityLabel,
     required this.audioTrackAccessibilityLabel,
+    required this.videoButtonAccessibilityLabel,
     required this.videoPlayerAccessibilityLabel,
+    required this.noCameraAvailableMessage,
+    required this.cancelVideoRecordingButton,
+    required this.videoRecordingSwitchCamera,
   });
 
   /// Accessibility label (hint) for the attachment button
@@ -55,6 +59,18 @@ abstract class ChatL10n {
 
   /// Accessibility label (hint) for the video player in video message
   final String videoPlayerAccessibilityLabel;
+
+  /// Accessibility label (hint) for the video button
+  final String videoButtonAccessibilityLabel;
+
+  /// Message that appears in camera recorder when no camera is available
+  final String noCameraAvailableMessage;
+
+  /// Button to cancel recording of a video message
+  final String cancelVideoRecordingButton;
+
+  /// Tooltip/hint for the button to switch between cameras (front/back) in video recording UI
+  final String videoRecordingSwitchCamera;
 }
 
 /// English l10n which extends [ChatL10n]
@@ -75,7 +91,11 @@ class ChatL10nEn extends ChatL10n {
     String playButtonAccessibilityLabel = 'Play',
     String pauseButtonAccessibilityLabel = 'Pause',
     String audioTrackAccessibilityLabel = 'Tap to play/pause, slide to seek',
+    String videoButtonAccessibilityLabel = 'Record video message',
     String videoPlayerAccessibilityLabel = 'Play/Pause',
+    String noCameraAvailableMessage = 'No camera available',
+    String cancelVideoRecordingButton = 'Cancel',
+    String videoRecordingSwitchCamera = 'Switch camera',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
@@ -89,7 +109,11 @@ class ChatL10nEn extends ChatL10n {
           playButtonAccessibilityLabel: playButtonAccessibilityLabel,
           pauseButtonAccessibilityLabel: pauseButtonAccessibilityLabel,
           audioTrackAccessibilityLabel: audioTrackAccessibilityLabel,
+          videoButtonAccessibilityLabel: videoButtonAccessibilityLabel,
           videoPlayerAccessibilityLabel: videoPlayerAccessibilityLabel,
+          noCameraAvailableMessage: noCameraAvailableMessage,
+          cancelVideoRecordingButton: cancelVideoRecordingButton,
+          videoRecordingSwitchCamera: videoRecordingSwitchCamera,
         );
 }
 
@@ -112,7 +136,11 @@ class ChatL10nEs extends ChatL10n {
     String pauseButtonAccessibilityLabel = 'Pausar',
     String audioTrackAccessibilityLabel =
         'Toca para reproducir/pausar, desliza para buscar',
+    String videoButtonAccessibilityLabel = 'Grabar mensaje de video',
     String videoPlayerAccessibilityLabel = 'Reproducir/Pausar',
+    String noCameraAvailableMessage = 'No hay cámara disponible',
+    String cancelVideoRecordingButton = 'Cancelar',
+    String videoRecordingSwitchCamera = 'Cambiar de cámara',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
@@ -126,7 +154,11 @@ class ChatL10nEs extends ChatL10n {
           playButtonAccessibilityLabel: playButtonAccessibilityLabel,
           pauseButtonAccessibilityLabel: pauseButtonAccessibilityLabel,
           audioTrackAccessibilityLabel: audioTrackAccessibilityLabel,
+          videoButtonAccessibilityLabel: videoButtonAccessibilityLabel,
           videoPlayerAccessibilityLabel: videoPlayerAccessibilityLabel,
+          noCameraAvailableMessage: noCameraAvailableMessage,
+          cancelVideoRecordingButton: cancelVideoRecordingButton,
+          videoRecordingSwitchCamera: videoRecordingSwitchCamera,
         );
 }
 
@@ -149,7 +181,11 @@ class ChatL10nPl extends ChatL10n {
     String pauseButtonAccessibilityLabel = 'Wstrzymać',
     String audioTrackAccessibilityLabel =
         'Dotknij, aby odtworzyć/wstrzymać, przesuń, aby wyszukać',
+    String videoButtonAccessibilityLabel = 'Nagraj wiadomość wideo',
     String videoPlayerAccessibilityLabel = 'Odtwórz/Wstrzymać',
+    String noCameraAvailableMessage = 'Brak dostępnej kamery',
+    String cancelVideoRecordingButton = 'Anuluj',
+    String videoRecordingSwitchCamera = 'Przełącz aparat',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
@@ -163,7 +199,11 @@ class ChatL10nPl extends ChatL10n {
           playButtonAccessibilityLabel: playButtonAccessibilityLabel,
           pauseButtonAccessibilityLabel: pauseButtonAccessibilityLabel,
           audioTrackAccessibilityLabel: audioTrackAccessibilityLabel,
+          videoButtonAccessibilityLabel: videoButtonAccessibilityLabel,
           videoPlayerAccessibilityLabel: videoPlayerAccessibilityLabel,
+          noCameraAvailableMessage: noCameraAvailableMessage,
+          cancelVideoRecordingButton: cancelVideoRecordingButton,
+          videoRecordingSwitchCamera: videoRecordingSwitchCamera,
         );
 }
 
@@ -186,7 +226,11 @@ class ChatL10nRu extends ChatL10n {
     String pauseButtonAccessibilityLabel = 'Приостановить',
     String audioTrackAccessibilityLabel =
         'Нажмите для воспроизведения / паузы, проведите пальцем для поиска',
+    String videoButtonAccessibilityLabel = 'Записать видео сообщение',
     String videoPlayerAccessibilityLabel = 'Воспроизвести/Приостановить',
+    String noCameraAvailableMessage = 'Камера недоступна',
+    String cancelVideoRecordingButton = 'Отмена',
+    String videoRecordingSwitchCamera = 'Переключить камеру',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
@@ -200,7 +244,11 @@ class ChatL10nRu extends ChatL10n {
           playButtonAccessibilityLabel: playButtonAccessibilityLabel,
           pauseButtonAccessibilityLabel: pauseButtonAccessibilityLabel,
           audioTrackAccessibilityLabel: audioTrackAccessibilityLabel,
+          videoButtonAccessibilityLabel: videoButtonAccessibilityLabel,
           videoPlayerAccessibilityLabel: videoPlayerAccessibilityLabel,
+          noCameraAvailableMessage: noCameraAvailableMessage,
+          cancelVideoRecordingButton: cancelVideoRecordingButton,
+          videoRecordingSwitchCamera: videoRecordingSwitchCamera,
         );
 }
 
@@ -223,7 +271,11 @@ class ChatL10nUk extends ChatL10n {
     String pauseButtonAccessibilityLabel = 'Призупиніть',
     String audioTrackAccessibilityLabel =
         'Натисніть, щоб відтворити / призупинити, проведіть пальцем, щоб шукати',
+    String videoButtonAccessibilityLabel = 'Записати відео-повідомлення',
     String videoPlayerAccessibilityLabel = 'відтворити / призупинити',
+    String noCameraAvailableMessage = 'Немає доступної камери',
+    String cancelVideoRecordingButton = 'Скасувати',
+    String videoRecordingSwitchCamera = 'Переключити камеру',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
@@ -237,6 +289,10 @@ class ChatL10nUk extends ChatL10n {
           playButtonAccessibilityLabel: playButtonAccessibilityLabel,
           pauseButtonAccessibilityLabel: pauseButtonAccessibilityLabel,
           audioTrackAccessibilityLabel: audioTrackAccessibilityLabel,
+          videoButtonAccessibilityLabel: videoButtonAccessibilityLabel,
           videoPlayerAccessibilityLabel: videoPlayerAccessibilityLabel,
+          noCameraAvailableMessage: noCameraAvailableMessage,
+          cancelVideoRecordingButton: cancelVideoRecordingButton,
+          videoRecordingSwitchCamera: videoRecordingSwitchCamera,
         );
 }

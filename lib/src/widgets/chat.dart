@@ -32,6 +32,7 @@ class Chat extends StatefulWidget {
     this.theme = const DefaultChatTheme(),
     required this.user,
     this.onAudioRecorded,
+    this.onVideoRecorded,
   }) : super(key: key);
 
   /// See [Message.dateLocale]
@@ -50,6 +51,13 @@ class Chat extends StatefulWidget {
     required List<double> waveForm,
     required String mimeType,
   })? onAudioRecorded;
+
+  /// See [Input.onVideoRecorded]
+  final Future<bool> Function({
+    required Duration length,
+    required String filePath,
+    required String mimeType,
+  })? onVideoRecorded;
 
   /// Localized copy. Extend [ChatL10n] class to create your own copy or use
   /// existing one, like the default [ChatL10nEn]. You can customize only
@@ -353,6 +361,7 @@ class _ChatState extends State<Chat> {
                         isAttachmentUploading: widget.isAttachmentUploading,
                         onAttachmentPressed: widget.onAttachmentPressed,
                         onAudioRecorded: widget.onAudioRecorded,
+                        onVideoRecorded: widget.onVideoRecorded,
                         onSendPressed: widget.onSendPressed,
                       ),
                     ],

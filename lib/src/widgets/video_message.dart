@@ -34,6 +34,7 @@ class _VideoMessageState extends State<VideoMessage> {
   late VideoPlayerController _controller;
 
   bool _videoPlayerReady = false;
+  bool _videoPaused = false;
 
   @override
   void initState() {
@@ -67,13 +68,17 @@ class _VideoMessageState extends State<VideoMessage> {
     if (!_videoPlayerReady) return;
     if (_controller.value.isPlaying) {
       await _controller.pause();
-      setState(() {});
+      setState(() {
+        _videoPaused = true;
+      });
     } else {
       if (_controller.value.position >= _controller.value.duration) {
         await _controller.seekTo(const Duration());
       }
       await _controller.play();
-      setState(() {});
+      setState(() {
+        _videoPaused = false;
+      });
     }
   }
 
@@ -153,7 +158,7 @@ class _VideoMessageState extends State<VideoMessage> {
                       child: Text(
                         VideoMessage.durationFormat.format(
                           DateTime.fromMillisecondsSinceEpoch(
-                            _controller.value.isPlaying
+                            _controller.value.isPlaying || _videoPaused
                                 ? (_controller.value.duration.inMilliseconds -
                                     _controller.value.position.inMilliseconds)
                                 : _controller.value.duration.inMilliseconds,
