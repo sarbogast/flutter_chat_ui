@@ -37,6 +37,7 @@ abstract class ChatTheme {
     required this.videoTrackBackgroundColor,
     required this.videoTrackPlayedColor,
     required this.videoTrackBufferedColor,
+    required this.videoButtonIcon,
   });
 
   /// Icon for select attachment button
@@ -44,6 +45,9 @@ abstract class ChatTheme {
 
   /// Icon for audio recording button
   final String? audioButtonIcon;
+
+  /// Icon for video recording button
+  final String? videoButtonIcon;
 
   /// Used as a background color of a chat widget
   final Color backgroundColor;
@@ -199,6 +203,7 @@ class DefaultChatTheme extends ChatTheme {
     Color videoTrackBackgroundColor = const Color.fromRGBO(200, 200, 200, 0.5),
     Color videoTrackBufferedColor = const Color.fromRGBO(50, 50, 200, 0.2),
     Color videoTrackPlayedColor = const Color(0xaa6f61e8),
+    String? videoButtonIcon,
   }) : super(
           attachmentButtonIcon: attachmentButtonIcon,
           backgroundColor: backgroundColor,
@@ -231,6 +236,7 @@ class DefaultChatTheme extends ChatTheme {
           videoTrackBackgroundColor: videoTrackBackgroundColor,
           videoTrackBufferedColor: videoTrackBufferedColor,
           videoTrackPlayedColor: videoTrackPlayedColor,
+          videoButtonIcon: videoButtonIcon,
         );
 }
 
@@ -300,6 +306,7 @@ class DarkChatTheme extends ChatTheme {
     Color videoTrackBackgroundColor = const Color.fromRGBO(200, 200, 200, 0.5),
     Color videoTrackBufferedColor = const Color.fromRGBO(50, 50, 200, 0.2),
     Color videoTrackPlayedColor = const Color(0xaa6f61e8),
+    String? videoButtonIcon,
   }) : super(
           attachmentButtonIcon: attachmentButtonIcon,
           backgroundColor: backgroundColor,
@@ -332,5 +339,6 @@ class DarkChatTheme extends ChatTheme {
           videoTrackBackgroundColor: videoTrackBackgroundColor,
           videoTrackBufferedColor: videoTrackBufferedColor,
           videoTrackPlayedColor: videoTrackPlayedColor,
+          videoButtonIcon: videoButtonIcon,
         );
 }

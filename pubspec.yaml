@@ -21,6 +21,7 @@ dependencies:
   uuid: ^3.0.4
   path: ^1.8.0
   video_player: ^2.1.1
+  camera: ^0.8.1
 
 dev_dependencies:
   flutter_test:
