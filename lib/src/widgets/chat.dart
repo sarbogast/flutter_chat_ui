@@ -81,7 +81,7 @@ class Chat extends StatefulWidget {
       onPreviewDataFetched;
 
   /// See [Input.onSendPressed]
-  final void Function(types.PartialText) onSendPressed;
+  final void Function(types.PartialText)? onSendPressed;
 
   /// Chat theme. Extend [ChatTheme] class to create your own theme or use
   /// existing one, like the [DefaultChatTheme]. You can customize only certain
@@ -357,13 +357,14 @@ class _ChatState extends State<Chat> {
                                 ),
                               ),
                       ),
-                      Input(
-                        isAttachmentUploading: widget.isAttachmentUploading,
-                        onAttachmentPressed: widget.onAttachmentPressed,
-                        onAudioRecorded: widget.onAudioRecorded,
-                        onVideoRecorded: widget.onVideoRecorded,
-                        onSendPressed: widget.onSendPressed,
-                      ),
+                      if (widget.onSendPressed != null)
+                        Input(
+                          isAttachmentUploading: widget.isAttachmentUploading,
+                          onAttachmentPressed: widget.onAttachmentPressed,
+                          onAudioRecorded: widget.onAudioRecorded,
+                          onVideoRecorded: widget.onVideoRecorded,
+                          onSendPressed: widget.onSendPressed!,
+                        ),
                     ],
                   ),
                 ),

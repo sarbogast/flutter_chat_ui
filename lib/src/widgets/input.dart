@@ -220,7 +220,7 @@ class _InputState extends State<Input> {
       setState(() {
         _videoUploading = true;
       });
-      final success = await widget.onVideoRecorded!(
+      await widget.onVideoRecorded!(
         length: file.length,
         filePath: file.filePath,
         mimeType: file.mimeType,
