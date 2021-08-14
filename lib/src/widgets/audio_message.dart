@@ -42,8 +42,8 @@ class _AudioMessageState extends State<AudioMessage> {
   }
 
   @override
-  Future<void> dispose() async {
-    await _audioPlayer.closeAudioSession();
+  void dispose() {
+    _audioPlayer.closeAudioSession();
     super.dispose();
   }
 
