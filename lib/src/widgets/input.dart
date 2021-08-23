@@ -23,7 +23,9 @@ class Input extends StatefulWidget {
     this.onAttachmentPressed,
     required this.onSendPressed,
     this.onAudioRecorded,
+    this.onStartAudioRecording,
     this.onVideoRecorded,
+    this.onStartVideoRecording,
   }) : super(key: key);
 
   /// See [AttachmentButton.onPressed]
@@ -39,6 +41,12 @@ class Input extends StatefulWidget {
   /// be transformed to [types.TextMessage] and added to the messages list.
   final void Function(types.PartialText) onSendPressed;
 
+  /// Called right when the user presses the audio recording button
+  /// And returns true if and only if audio recording is possible
+  /// Typically use to check audio recording permissions
+  /// If this function returns false, the audio recording button will be disabled
+  final Future<bool> Function()? onStartAudioRecording;
+
   /// See [AudioButton.onPressed]
   final Future<bool> Function({
     required Duration length,
@@ -46,6 +54,12 @@ class Input extends StatefulWidget {
     required List<double> waveForm,
     required String mimeType,
   })? onAudioRecorded;
+
+  /// Called right when the user presses the video recording button
+  /// And returns true if and only if video recording is possible
+  /// Typically use to check video recording permissions
+  /// If this function returns false, the video recording button will be disabled
+  final Future<bool> Function()? onStartVideoRecording;
 
   /// See [VideoButton.onPressed]
   final Future<bool> Function({
@@ -65,7 +79,6 @@ class _InputState extends State<Input> {
   bool _sendButtonVisible = false;
   bool _recordingAudio = false;
   bool _audioUploading = false;
-  //bool _recordingVideo = false;
   bool _videoUploading = false;
 
   @override
@@ -153,6 +166,10 @@ class _InputState extends State<Input> {
 
   Future<void> _toggleAudioRecording() async {
     if (!_recordingAudio) {
+      if (widget.onStartAudioRecording != null &&
+          !(await widget.onStartAudioRecording!())) {
+        return;
+      }
       setState(() {
         _recordingAudio = true;
       });
@@ -182,6 +199,11 @@ class _InputState extends State<Input> {
   }
 
   Future<void> _toggleVideoRecording() async {
+    if (widget.onStartVideoRecording != null &&
+        !(await widget.onStartVideoRecording!())) {
+      return;
+    }
+
     final l10n = InheritedL10n.of(context).l10n;
     final theme = InheritedChatTheme.of(context).theme;
     final file = await Navigator.of(context).push<VideoRecording?>(

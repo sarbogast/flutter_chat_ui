@@ -31,7 +31,9 @@ class Chat extends StatefulWidget {
     required this.onSendPressed,
     this.theme = const DefaultChatTheme(),
     required this.user,
+    this.onStartAudioRecording,
     this.onAudioRecorded,
+    this.onStartVideoRecording,
     this.onVideoRecorded,
   }) : super(key: key);
 
@@ -44,6 +46,9 @@ class Chat extends StatefulWidget {
   /// See [Input.isAttachmentUploading]
   final bool? isAttachmentUploading;
 
+  /// See [Input.onStartAudioRecording]
+  final Future<bool> Function()? onStartAudioRecording;
+
   /// See [Input.onAudioRecorded]
   final Future<bool> Function({
     required Duration length,
@@ -51,6 +56,9 @@ class Chat extends StatefulWidget {
     required List<double> waveForm,
     required String mimeType,
   })? onAudioRecorded;
+
+  /// See [Input.onStartVideoRecording]
+  final Future<bool> Function()? onStartVideoRecording;
 
   /// See [Input.onVideoRecorded]
   final Future<bool> Function({
@@ -361,7 +369,9 @@ class _ChatState extends State<Chat> {
                         Input(
                           isAttachmentUploading: widget.isAttachmentUploading,
                           onAttachmentPressed: widget.onAttachmentPressed,
+                          onStartAudioRecording: widget.onStartAudioRecording,
                           onAudioRecorded: widget.onAudioRecorded,
+                          onStartVideoRecording: widget.onStartVideoRecording,
                           onVideoRecorded: widget.onVideoRecorded,
                           onSendPressed: widget.onSendPressed!,
                         ),

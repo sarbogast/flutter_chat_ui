@@ -12,7 +12,7 @@ class AudioButton extends StatelessWidget {
   }) : super(key: key);
 
   /// Callback for audio button tap event
-  final void Function() onPressed;
+  final void Function()? onPressed;
 
   final bool recordingAudio;
 

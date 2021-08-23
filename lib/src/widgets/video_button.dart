@@ -11,7 +11,7 @@ class VideoButton extends StatelessWidget {
   }) : super(key: key);
 
   /// Callback for video button tap event
-  final void Function() onPressed;
+  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
