@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/src/widgets/audio_message.dart';
 import 'package:flutter_chat_ui/src/widgets/video_message.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+
 import 'file_message.dart';
 import 'image_message.dart';
 import 'inherited_chat_theme.dart';
@@ -24,6 +25,7 @@ class Message extends StatelessWidget {
     this.onPreviewDataFetched,
     required this.previousMessageSameAuthor,
     required this.shouldRenderTime,
+    this.onStartAudioVideoPlayback,
   }) : super(key: key);
 
   /// Locale will be passed to the `Intl` package. Make sure you initialized
@@ -56,6 +58,9 @@ class Message extends StatelessWidget {
   /// delivery time.
   final bool shouldRenderTime;
 
+  /// Playback callback
+  final void Function(types.Message)? onStartAudioVideoPlayback;
+
   Widget _buildMessage() {
     switch (message.type) {
       case types.MessageType.file:
@@ -74,12 +79,14 @@ class Message extends StatelessWidget {
         return AudioMessage(
           message: audioMessage,
           messageWidth: messageWidth,
+          onStartPlayback: onStartAudioVideoPlayback,
         );
       case types.MessageType.video:
         final videoMessage = message as types.VideoMessage;
         return VideoMessage(
           message: videoMessage,
           messageWidth: messageWidth,
+          onStartPlayback: onStartAudioVideoPlayback,
         );
       case types.MessageType.text:
         final textMessage = message as types.TextMessage;

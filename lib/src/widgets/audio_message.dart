@@ -14,6 +14,7 @@ class AudioMessage extends StatefulWidget {
     Key? key,
     required this.message,
     required this.messageWidth,
+    this.onStartPlayback,
   }) : super(key: key);
 
   static final durationFormat = DateFormat('m:ss', 'en_US');
@@ -23,6 +24,9 @@ class AudioMessage extends StatefulWidget {
 
   /// Maximum message width
   final int messageWidth;
+
+  /// Audio playback callback
+  final void Function(types.AudioMessage)? onStartPlayback;
 
   @override
   _AudioMessageState createState() => _AudioMessageState();
@@ -66,6 +70,10 @@ class _AudioMessageState extends State<AudioMessage> {
       setState(() {
         _playing = true;
       });
+
+      if (widget.onStartPlayback != null) {
+        widget.onStartPlayback!(widget.message);
+      }
     } else {
       await _audioPlayer.setSubscriptionDuration(
         const Duration(milliseconds: 10),
@@ -80,6 +88,10 @@ class _AudioMessageState extends State<AudioMessage> {
       setState(() {
         _playing = true;
       });
+
+      if (widget.onStartPlayback != null) {
+        widget.onStartPlayback!(widget.message);
+      }
     }
   }
 

@@ -35,6 +35,7 @@ class Chat extends StatefulWidget {
     this.onAudioRecorded,
     this.onStartVideoRecording,
     this.onVideoRecorded,
+    this.onStartAudioVideoPlayback,
   }) : super(key: key);
 
   /// See [Message.dateLocale]
@@ -98,6 +99,8 @@ class Chat extends StatefulWidget {
 
   /// See [InheritedUser.user]
   final types.User user;
+
+  final void Function(types.Message)? onStartAudioVideoPlayback;
 
   @override
   _ChatState createState() => _ChatState();
@@ -358,6 +361,8 @@ class _ChatState extends State<Chat> {
                                           previousMessageSameAuthor:
                                               previousMessageSameAuthor,
                                           shouldRenderTime: shouldRenderTime,
+                                          onStartAudioVideoPlayback:
+                                              widget.onStartAudioVideoPlayback,
                                         ),
                                       ],
                                     );

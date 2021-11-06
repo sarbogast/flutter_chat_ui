@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class VideoMessage extends StatefulWidget {
     Key? key,
     required this.message,
     required this.messageWidth,
+    this.onStartPlayback,
   }) : super(key: key);
 
   static final durationFormat = DateFormat('m:ss', 'en_US');
@@ -25,6 +27,9 @@ class VideoMessage extends StatefulWidget {
 
   /// Maximum message width
   final int messageWidth;
+
+  /// Callback when video gets played
+  final void Function(types.VideoMessage)? onStartPlayback;
 
   @override
   _VideoMessageState createState() => _VideoMessageState();
@@ -75,10 +80,15 @@ class _VideoMessageState extends State<VideoMessage> {
       if (_controller.value.position >= _controller.value.duration) {
         await _controller.seekTo(const Duration());
       }
+
       await _controller.play();
       setState(() {
         _videoPaused = false;
       });
+
+      if (widget.onStartPlayback != null) {
+        widget.onStartPlayback!(widget.message);
+      }
     }
   }
 
@@ -101,6 +111,17 @@ class _VideoMessageState extends State<VideoMessage> {
             alignment: Alignment.bottomCenter,
             children: [
               VideoPlayer(_controller),
+              if (widget.message.status != types.Status.read &&
+                  widget.message.authorId != _user.id)
+                BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 10,
+                    sigmaY: 10,
+                  ),
+                  child: Container(
+                    color: Colors.black.withOpacity(0),
+                  ),
+                ),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 50),
                 reverseDuration: const Duration(milliseconds: 200),
